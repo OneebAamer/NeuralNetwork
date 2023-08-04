@@ -9,9 +9,13 @@ import sys
 from nnfs.datasets import spiral_data
 
 np.random.seed(0)
-nnfs.init()
 
-X, y = spiral_data(100, 3)
+# 2a + 3b
+X = [[2, 3],
+     [5, 4],
+     [1, 2],
+     [6, 1]]
+y = [13, 22, 8, 15]
 
 
 class Layer:
@@ -28,13 +32,6 @@ class Activation_ReLU:
         self.output = np.maximum(0, inputs)
 
 
-class Activation_Softmax:
-    def forward(self, inputs):
-        exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
-        probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
-        self.output = np.array(probabilities)
-
-
 class Loss:
     def calc(self, output, y):
         sample_loss = self.forward(output, y)
@@ -42,32 +39,46 @@ class Loss:
         return data_loss
 
 
-class Loss_CategoricalCrossEntropy(Loss):
+class Loss_Regression(Loss):
     def forward(self, y_pred, y_true):
-        samples = len(y_pred)
-        y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
-
-        # Handle both one hot encoded or scalar values.
-        if len(y_true.shape) == 1:
-            correct_confidences = y_pred_clipped[range(samples), y_true]
-        elif len(y_true.shape) == 2:
-            correct_confidences = np.sum(y_pred_clipped * y_true, axis=1)
-        negative_log_likelihoods = -np.log(correct_confidences)
-        return negative_log_likelihoods
+        correct_confidences = np.sum(abs(y_pred[i] - y_true[i])/y_true[i] for i in range(0,len(y_true)))
+        return correct_confidences
 
 
-layer1 = Layer(2, 3)
+layer1 = Layer(2, 4)
 activation1 = Activation_ReLU()
-layer2 = Layer(3, 3)
-activation2 = Activation_Softmax()
 
-layer1.forward(X)
-activation1.forward(layer1.output)
+layer2 = Layer(4, 1)
+activation2 = Activation_ReLU()
 
-layer2.forward(activation1.output)
-activation2.forward(layer2.output)
-print(activation2.output)
+loss_function = Loss_Regression()
 
-loss_function = Loss_CategoricalCrossEntropy()
-loss = loss_function.calc(activation2.output, y)
-print(loss)
+lowest_loss = 999999
+best_layer1_weights = layer1.weights.copy()
+best_layer1_biases = layer1.biases.copy()
+best_layer2_weights = layer2.weights.copy()
+best_layer2_biases = layer2.biases.copy()
+for iteration in range(20000):
+    layer1.weights += 0.01 * np.random.randn(2, 4)
+    layer1.biases += 0.01 * np.random.randn(1, 4)
+    layer2.weights += 0.01 * np.random.randn(4, 1)
+    layer2.biases += 0.01 * np.random.randn(1, 1)
+
+    layer1.forward(X)
+    activation1.forward(layer1.output)
+
+    layer2.forward(activation1.output)
+    activation2.forward(layer2.output)
+    # print(activation2.output)
+
+    loss = loss_function.calc(activation2.output, y)
+
+    # predictions = np.argmax(activation1.output, axis=1)
+
+    if loss < lowest_loss:
+        print("new low loss at iteration:", iteration, "loss:", loss, "activation output:", activation2.output)
+        best_layer1_weights = layer1.weights.copy()
+        best_layer1_biases = layer1.biases.copy()
+        best_layer2_weights = layer2.weights.copy()
+        best_layer2_biases = layer2.biases.copy()
+        lowest_loss = loss
