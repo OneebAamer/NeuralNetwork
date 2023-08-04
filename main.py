@@ -41,7 +41,7 @@ class Loss:
 
 class Loss_Regression(Loss):
     def forward(self, y_pred, y_true):
-        correct_confidences = np.sum(abs(y_pred[i] - y_true[i])/y_true[i] for i in range(0,len(y_true)))
+        correct_confidences = np.sum(abs(y_pred[i] - y_true[i])/y_true[i] for i in range(0,len(y_true))) / len(y_pred)
         return correct_confidences
 
 
@@ -69,14 +69,11 @@ for iteration in range(20000):
 
     layer2.forward(activation1.output)
     activation2.forward(layer2.output)
-    # print(activation2.output)
 
     loss = loss_function.calc(activation2.output, y)
 
-    # predictions = np.argmax(activation1.output, axis=1)
-
     if loss < lowest_loss:
-        print("new low loss at iteration:", iteration, "loss:", loss, "activation output:", activation2.output)
+        print("new low loss at iteration:", iteration, "accuracy: " + str(100 - round(loss * 100)) + "%, activation output:", activation2.output)
         best_layer1_weights = layer1.weights.copy()
         best_layer1_biases = layer1.biases.copy()
         best_layer2_weights = layer2.weights.copy()
