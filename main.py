@@ -27,10 +27,6 @@ def run():
     loss_function = LossRegression()
 
     lowest_loss = 999999
-    best_layer1_weights = layer1.weights.copy()
-    best_layer1_biases = layer1.biases.copy()
-    best_layer2_weights = layer2.weights.copy()
-    best_layer2_biases = layer2.biases.copy()
     for iteration in range(20000):
         layer1.weights += 0.01 * np.random.randn(2, 4)
         layer1.biases += 0.01 * np.random.randn(1, 4)
@@ -47,11 +43,7 @@ def run():
 
         if loss < lowest_loss:
             print("new low loss at iteration:", iteration,
-                  "accuracy: " + str(100 - round(loss * 100)) + "%, activation output:", activation2.output)
-            best_layer1_weights = layer1.weights.copy()
-            best_layer1_biases = layer1.biases.copy()
-            best_layer2_weights = layer2.weights.copy()
-            best_layer2_biases = layer2.biases.copy()
+                  "accuracy: " + str(100 - round(loss * 100)) + "%, activation output: \n", activation2.output)
             lowest_loss = loss
 
 
