@@ -1,48 +1,20 @@
 # Python Neural Network written by Oneeb Aamer.
 import numpy as np
+from Layer import Layer
+from ActivationFunction import ActivationReLU
+from Loss import LossRegression
 
 # Change this to get new randomly generated numbers
 np.random.seed(0)
 
-# Input data: 2a + 3b
+# Input data
 X = [[5, 4],
      [2, 3],
      [1, 2],
      [6, 1]]
+
+# Target Values: 2a + 3b
 y = [2 * x[0] + 3 * x[1] for x in X]
-
-
-# Object to store each layer of the neural network. Biases and weights are randomly generated upon intialization.
-class Layer:
-    def __init__(self, n_inputs, n_neurons):
-        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
-        self.biases = np.zeros((1, n_neurons))
-
-    # Forward propagation to send data to the next layer using matrix dot products.
-    def forward(self, inputs):
-        self.output = np.dot(inputs, self.weights) + self.biases
-
-
-# Rectified Linear Unit algorithm for our activation function.
-class ActivationReLU:
-    def forward(self, inputs):
-        self.output = np.maximum(0, inputs)
-
-
-# Calculate loss to determine how accurate our algorithm is and if any changes are needed.
-class Loss:
-    def calc(self, output, y):
-        sample_loss = self.forward(output, y)
-        data_loss = np.mean(sample_loss)
-        return data_loss
-
-
-# Finds the difference between the predicted and true values and returns the result.
-class LossRegression(Loss):
-    def forward(self, y_pred, y_true):
-        correct_confidences = np.sum(abs(y_pred[i] - y_true[i]) / y_true[i] for i in range(0, len(y_true))) / len(
-            y_pred)
-        return correct_confidences
 
 
 def run():
