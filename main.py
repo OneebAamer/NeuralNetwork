@@ -1,12 +1,5 @@
 # Python Neural Network written by Oneeb Aamer.
-import math
-
-from math import e as E
-import nnfs
 import numpy as np
-import matplotlib
-import sys
-from nnfs.datasets import spiral_data
 
 np.random.seed(0)
 
