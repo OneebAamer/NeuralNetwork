@@ -14,7 +14,16 @@ X = [[5, 4],
      [6, 1],
      [3, 3],
      [10, 10],
-     [100, 100]]
+     [100, 100],
+     [14, 17],
+     [19, 81],
+     [25, 32],
+     [13, 130],
+     [190, 145],
+     [245, 197],
+     [743, 453],
+     [333, 333],
+     [812, 435]]
 
 # Target Values: 2a + 3b
 y = [2 * x[0] + 3 * x[1] for x in X]
@@ -49,7 +58,7 @@ def train():
 
         if loss < lowest_loss:
             print("new low loss at iteration:", iteration,
-                  "accuracy: " + str(100 - round(loss * 100)) + "%, activation output: \n", activation2.output)
+                  "accuracy: " + str(100 - round(loss * 100)) + "%")
             lowest_loss = loss
             best_layer1_weights = layer1.weights.copy()
             best_layer1_biases = layer1.biases.copy()
